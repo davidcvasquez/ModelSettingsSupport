@@ -13,8 +13,12 @@ import CoreGraphics
 import CompactUUID
 import ModelSettingsSupport
 
+// Placeholders until NDGeometry package is available.
 public typealias NDFloat = CGFloat
 public typealias NDPoint = CGPoint
+public typealias NDVector = CGVector
+public typealias NDSize = CGSize
+public typealias NDRect = CGRect
 
 public extension UUIDBase58 {
     static let testSettings: UUIDBase58 = "5x9F8TcKRSosJzw9Ue9Rux"
