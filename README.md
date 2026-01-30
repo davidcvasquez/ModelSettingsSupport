@@ -2,7 +2,7 @@
 
 [![Swift](https://github.com/davidcvasquez/ModelSettingsSupport/actions/workflows/swift.yml/badge.svg)](https://github.com/davidcvasquez/ModelSettingsSupport/actions/workflows/swift.yml) [![codecov](https://codecov.io/gh/davidcvasquez/ModelSettingsSupport/graph/badge.svg?token=XB7T7FXO8B)](https://codecov.io/gh/davidcvasquez/ModelSettingsSupport)
 
-Macros to generate type ID, name, and properties for model settings, suitable for registration as a `ModelSettingPropertiesContainer` and subsequent reference for UI layouts.
+Swift macros to generate type ID, name, and properties for model settings, suitable for registration as a `ModelSettingPropertiesContainer` and subsequent reference for UI layouts.
 
 ## Details
 
