@@ -1,6 +1,6 @@
-# ``ModelSettingsSupport``
+# ModelSettingsSupport
 
-Macros to generate type ID, name, and properties for model settings, suitable for registration as a `ModelSettingPropertiesContainer` and subsequent reference for UI layouts.
+Swift macros to generate type ID, name, and properties for model settings, suitable for registration as a `ModelSettingPropertiesContainer` and subsequent reference for UI layouts.
 
 ## Overview
 
