@@ -50,7 +50,7 @@ jobs:
           # Avoid any Pages/Jekyll edge cases
           touch "${OUTPUT_DIR}/.nojekyll"
 
-           # Root redirect so /CompactUUID/ works.
+           # Root redirect so /ModelSettingsSupport/ works.
            cat > "${OUTPUT_DIR}/index.html" <<'HTML'
            <!doctype html>
            <html lang="en">
