@@ -38,15 +38,18 @@ let package = Package(
         ),
 
         // Library that exposes a macro as part of its API, which is used in client programs.
-        .target(name: "ModelSettingsSupport", dependencies: ["ModelSettingsSupportMacros"]),
+        .target(name: "ModelSettingsSupport",
+                dependencies: ["CompactUUID", "ModelSettingsSupportMacros"]),
 
         // A client of the library, which is able to use the macro in its own code.
-        .executableTarget(name: "ModelSettingsSupportClient", dependencies: ["ModelSettingsSupport"]),
+        .executableTarget(name: "ModelSettingsSupportClient",
+                          dependencies: ["CompactUUID", "ModelSettingsSupport"]),
 
         // A test target used to develop the macro implementation.
         .testTarget(
             name: "ModelSettingsSupportTests",
             dependencies: [
+                "CompactUUID",
                 "ModelSettingsSupportMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ]
