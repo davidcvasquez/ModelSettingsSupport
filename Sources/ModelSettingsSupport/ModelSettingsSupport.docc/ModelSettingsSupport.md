@@ -44,3 +44,77 @@ func registerSettings(
     print("Registered ModelSettingPropertiesContainer (name: \(containerType.__name)), (id: \(containerType.id)): \(containerType.__modelSettingProperties)")
 }
 ```
+
+Registrars of types can then access the type ID, name, and properties using the synthesized static members on the type\:
+
+```Swift
+public protocol StaticIdentifiable<ID> {
+
+    /// A type representing the stable identity of the type.
+    associatedtype ID : Hashable
+
+    /// The stable identity of the type.
+    static var id: Self.ID { get }
+}
+
+public protocol ModelSettingPropertiesContainer: StaticIdentifiable {
+    static var __name: String { get }
+    static var __modelSettingProperties: [ModelSettingProperty] { get }
+}
+
+public struct ModelSettingProperty {
+    public let id: UUIDBase58
+    public let name: String
+    public let valueSource: PropertyValueSource
+    public let access: PropertyAccessKind
+    public let valueKind: PropertyValueKind
+
+    public init(
+        id: UUIDBase58,
+        name: String,
+        valueSource: PropertyValueSource,
+        access: PropertyAccessKind,
+        valueKind: PropertyValueKind
+    ) {
+        self.id = id
+        self.name = name
+        self.valueSource = valueSource
+        self.access = access
+        self.valueKind = valueKind
+    }
+}
+
+public enum PropertyValueSource: String {
+    case stored
+    case computed
+}
+
+public enum PropertyAccessKind: String {
+    case readOnly
+    case readWrite
+}
+
+public enum PropertyValueKind: CustomStringConvertible {
+    case bool
+    case int
+    case float
+    case cgFloat
+    case ndFloat
+    case angle
+    case ndAngle
+    case cgPoint
+    case ndPoint
+    case ndPolarPoint
+    case cgVector
+    case ndVector
+    case cgSize
+    case ndSize
+    case cgRect
+    case ndRect
+    case color
+    case cgColor
+    case text
+    case other(String)
+    // ...
+}
+```
