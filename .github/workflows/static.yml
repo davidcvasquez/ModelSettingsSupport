@@ -1,0 +1,86 @@
+name: Deploy DocC to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: macos-15
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Toolchain versions
+        run: |
+          swift --version
+
+      - name: Generate DocC (static hosting)
+        run: |
+          set -euo pipefail
+
+          OUTPUT_DIR=".build/docc-site"
+          rm -rf "${OUTPUT_DIR}"
+          mkdir -p "${OUTPUT_DIR}"
+
+          # This subcommand is provided by swift-docc-plugin.
+          swift package \
+            --allow-writing-to-directory "${OUTPUT_DIR}" \
+            generate-documentation \
+            --target ModelSettingsSupport \
+            --output-path "${OUTPUT_DIR}" \
+            --transform-for-static-hosting \
+            --hosting-base-path "${{ github.event.repository.name }}"
+
+          # Avoid any Pages/Jekyll edge cases
+          touch "${OUTPUT_DIR}/.nojekyll"
+
+           # Root redirect so /CompactUUID/ works.
+           cat > "${OUTPUT_DIR}/index.html" <<'HTML'
+           <!doctype html>
+           <html lang="en">
+             <head>
+               <meta charset="utf-8" />
+               <meta http-equiv="refresh" content="0; url=documentation/modelsettingssupport/" />
+               <link rel="canonical" href="documentation/modelsettingssupport/" />
+               <meta name="viewport" content="width=device-width, initial-scale=1" />
+               <title>ModelSettingsSupport Documentation</title>
+             </head>
+             <body>
+               <p>
+                 Redirecting to
+                 <a href="documentation/modelsettingssupport/">ModelSettingsSupport documentation</a>…
+               </p>
+             </body>
+          </html>
+          HTML
+    
+          # Sanity checks
+          test -f "${OUTPUT_DIR}/index.html"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .build/docc-site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

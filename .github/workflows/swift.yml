@@ -1,0 +1,73 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: Swift
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build
+      run: swift build -v
+    - name: Run tests
+      run: swift test -v --enable-code-coverage
+
+    - name: Convert SwiftPM coverage to lcov
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        BIN_PATH="$(swift build --show-bin-path)"
+        echo "BIN_PATH=$BIN_PATH"
+
+        PROF_DATA="$(find "$BIN_PATH" -name "default.profdata" -print -quit)"
+        if [[ -z "${PROF_DATA:-}" ]]; then
+            echo "Could not find default.profdata"
+            find "$BIN_PATH" -maxdepth 4 -type f | sed -n '1,200p'
+            exit 1
+        fi
+        echo "PROF_DATA=$PROF_DATA"
+
+        # Find the compiled test binary inside the .xctest bundle
+        XCTEST_BUNDLE="$(find "$BIN_PATH" -name "*Tests.xctest" -print -quit)"
+        if [[ -z "${XCTEST_BUNDLE:-}" ]]; then
+            echo "Could not find *Tests.xctest bundle"
+            find "$BIN_PATH" -maxdepth 4 -type d | sed -n '1,200p'
+            exit 1
+        fi
+        echo "XCTEST_BUNDLE=$XCTEST_BUNDLE"
+
+        # macOS .xctest bundles keep the executable here:
+        TEST_BIN="$(find "$XCTEST_BUNDLE/Contents/MacOS" -type f -perm -111 -print -quit)"
+        if [[ -z "${TEST_BIN:-}" ]]; then
+            echo "Could not find test executable in $XCTEST_BUNDLE/Contents/MacOS"
+            find "$XCTEST_BUNDLE" -maxdepth 3 -type f | sed -n '1,200p'
+            exit 1
+        fi
+        echo "TEST_BIN=$TEST_BIN"
+
+        xcrun llvm-cov export \
+          -format="lcov" \
+          "$TEST_BIN" \
+          -instr-profile "$PROF_DATA" \
+          > coverage.lcov
+
+        echo "Wrote coverage.lcov"
+        wc -l coverage.lcov || true
+      
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: coverage.lcov
+        
