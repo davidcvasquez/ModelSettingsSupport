@@ -75,7 +75,7 @@ public struct ModelSettingProperty {
         name: String,
         valueSource: PropertyValueSource,
         access: PropertyAccessKind,
-        valueKind: PropertyValueKind
+        valueKind: PropertyValueKind,
         mapEntry: PartialKeyPath<ModelSettingPropertiesType>
     ) {
         self.id = id
