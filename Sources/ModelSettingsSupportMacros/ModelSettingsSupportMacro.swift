@@ -16,6 +16,7 @@ import SwiftSyntaxMacros
 import SwiftDiagnostics
 
 import Foundation
+import Collections
 import CompactUUID
 
 @main
@@ -57,14 +58,17 @@ public struct ModelSettingPropertiesMacro: MemberMacro {
 
         let properties = collectModelSettingProperties(from: structDecl, in: context)
 
+        let typeName = structDecl.name.text
+
         let itemsSource = properties.map { property in
             """
-            .init(
+            \(property.id) : .init(
                 id: \(property.id),
                 name: "\(property.name)",
                 valueSource: .\(property.valueSource),
                 access: .\(property.access),
-                valueKind: \(valueKindExpr(property.valueKind))
+                valueKind: \(valueKindExpr(property.valueKind)),
+                mapEntry: \\.\(property.name)
             )
             """
         }.joined(separator: ",\n")
@@ -74,7 +78,6 @@ public struct ModelSettingPropertiesMacro: MemberMacro {
         public static let id: UUIDBase58 = \(idExpr)
         """
 
-        let typeName = structDecl.name.text
         let nameDecl =
         """
         public static let __name: String = "\(typeName)"
@@ -82,7 +85,7 @@ public struct ModelSettingPropertiesMacro: MemberMacro {
 
         let source =
         """
-        public static let __modelSettingProperties: [ModelSettingProperty] = [
+        public static let __modelSettingProperties: OrderedDictionary<UUIDBase58, ModelSettingProperty<\(typeName)>> = [
         \(itemsSource.isEmpty ? "" : "    ")\(itemsSource.replacingOccurrences(of: "\n", with: "\n    "))
         ]
         """

@@ -10,6 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 import CoreGraphics
+import Collections
 import CompactUUID
 import ModelSettingsSupport
 
@@ -30,7 +31,7 @@ public extension UUIDBase58 {
 }
 
 func registerSettings(
-    for containerType: any ModelSettingPropertiesContainer.Type
+    for containerType: (some ModelSettingPropertiesContainer).Type
 ) {
     print("Registered ModelSettingPropertiesContainer (name: \(containerType.__name)), (id: \(containerType.id)): \(containerType.__modelSettingProperties)")
 }
@@ -62,11 +63,13 @@ func printModelSettingProperties() {
           TestSettings.__modelSettingProperties.count)
     for p in TestSettings.__modelSettingProperties {
         print("""
-        - id: \(p.id)
-          name: \(p.name)
-          valueSource: \(p.valueSource)
-          access: \(p.access)
-          valueKind: \(p.valueKind)
+        - key: \(p.key)
+        - id: \(p.value.id)
+          name: \(p.value.name)
+          valueSource: \(p.value.valueSource)
+          access: \(p.value.access)
+          valueKind: \(p.value.valueKind)
+          mapEntry: \(p.value.mapEntry)
         """)
     }
 }

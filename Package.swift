@@ -19,6 +19,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/apple/swift-collections.git", from: "1.3.0"),
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "510.0.2"),
         .package(url: "https://github.com/davidcvasquez/CompactUUID.git", from: "1.1.1"),
         // DocC plugin (supports `generate-documentation`)
@@ -31,6 +32,7 @@ let package = Package(
         .macro(
             name: "ModelSettingsSupportMacros",
             dependencies: [
+                .product(name: "Collections", package: "swift-collections"),
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
                 .product(name: "CompactUUID", package: "CompactUUID")
@@ -39,17 +41,26 @@ let package = Package(
 
         // Library that exposes a macro as part of its API, which is used in client programs.
         .target(name: "ModelSettingsSupport",
-                dependencies: ["CompactUUID", "ModelSettingsSupportMacros"]),
+                dependencies: [
+                    .product(name: "Collections", package: "swift-collections"),
+                    .product(name: "CompactUUID", package: "CompactUUID"),
+                    "ModelSettingsSupportMacros"
+                ]),
 
         // A client of the library, which is able to use the macro in its own code.
         .executableTarget(name: "ModelSettingsSupportClient",
-                          dependencies: ["CompactUUID", "ModelSettingsSupport"]),
+                          dependencies: [
+                            .product(name: "Collections", package: "swift-collections"),
+                            .product(name: "CompactUUID", package: "CompactUUID"),
+                            "ModelSettingsSupport"
+                          ]),
 
         // A test target used to develop the macro implementation.
         .testTarget(
             name: "ModelSettingsSupportTests",
             dependencies: [
-                "CompactUUID",
+                .product(name: "Collections", package: "swift-collections"),
+                .product(name: "CompactUUID", package: "CompactUUID"),
                 "ModelSettingsSupportMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ]

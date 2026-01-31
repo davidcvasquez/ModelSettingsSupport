@@ -9,6 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Collections
 import CompactUUID
 
 public protocol StaticIdentifiable<ID> {
@@ -20,9 +21,11 @@ public protocol StaticIdentifiable<ID> {
     static var id: Self.ID { get }
 }
 
-public protocol ModelSettingPropertiesContainer: StaticIdentifiable {
+public protocol ModelSettingPropertiesContainer<ModelSettingPropertiesType>: StaticIdentifiable {
+    associatedtype ModelSettingPropertiesType
     static var __name: String { get }
-    static var __modelSettingProperties: [ModelSettingProperty] { get }
+    static var __modelSettingProperties: OrderedDictionary<
+        UUIDBase58, ModelSettingProperty<ModelSettingPropertiesType>> { get }
 }
 
 @attached(member, names: named(id), named(__name), named(__modelSettingProperties))
@@ -38,26 +41,35 @@ public macro ModelSettingID(_ id: UUIDBase58) = #externalMacro(
     type: "ModelSettingIDMacro"
 )
 
-public struct ModelSettingProperty {
+public struct ModelSettingProperty<ModelSettingPropertiesType> {
     public let id: UUIDBase58
     public let name: String
     public let valueSource: PropertyValueSource
     public let access: PropertyAccessKind
     public let valueKind: PropertyValueKind
+    public let mapEntry: PartialKeyPath<ModelSettingPropertiesType>
 
-    public init(id: UUIDBase58, name: String, valueSource: PropertyValueSource, access: PropertyAccessKind, valueKind: PropertyValueKind) {
+    public init(
+        id: UUIDBase58,
+        name: String,
+        valueSource: PropertyValueSource,
+        access: PropertyAccessKind,
+        valueKind: PropertyValueKind,
+        mapEntry: PartialKeyPath<ModelSettingPropertiesType>
+    ) {
         self.id = id
         self.name = name
         self.valueSource = valueSource
         self.access = access
         self.valueKind = valueKind
+        self.mapEntry = mapEntry
     }
 }
 
 public enum PropertyValueSource: String { case stored, computed }
 public enum PropertyAccessKind: String { case readOnly, readWrite }
 
-public enum PropertyValueKind: CustomStringConvertible {
+public enum PropertyValueKind: Equatable, Hashable, CustomStringConvertible {
     case bool
     case int
     case float
