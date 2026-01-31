@@ -59,7 +59,7 @@ public protocol StaticIdentifiable<ID> {
 
 public protocol ModelSettingPropertiesContainer: StaticIdentifiable {
     static var __name: String { get }
-    static var __modelSettingProperties: [ModelSettingProperty] { get }
+    static var __modelSettingProperties: OrderedDictionary<UUIDBase58, ModelSettingProperty<TestSettings>> { get }
 }
 
 public struct ModelSettingProperty {
@@ -68,6 +68,7 @@ public struct ModelSettingProperty {
     public let valueSource: PropertyValueSource
     public let access: PropertyAccessKind
     public let valueKind: PropertyValueKind
+    public let mapEntry: PartialKeyPath<ModelSettingPropertiesType>
 
     public init(
         id: UUIDBase58,
@@ -75,12 +76,14 @@ public struct ModelSettingProperty {
         valueSource: PropertyValueSource,
         access: PropertyAccessKind,
         valueKind: PropertyValueKind
+        mapEntry: PartialKeyPath<ModelSettingPropertiesType>
     ) {
         self.id = id
         self.name = name
         self.valueSource = valueSource
         self.access = access
         self.valueKind = valueKind
+        self.mapEntry = mapEntry
     }
 }
 
