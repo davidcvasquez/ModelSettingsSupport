@@ -34,6 +34,9 @@ final class ModelSettingsSupportTests: XCTestCase {
             public struct TestSettings {
                 @ModelSettingID("c8HeNprhppcfYwyTs7K7Di")
                 public let isEnabled: Bool
+            
+                // No ModelSettingID => should be ignored by macro
+                public var ignored: Int
             }
             """,
             expandedSource: """
@@ -41,11 +44,14 @@ final class ModelSettingsSupportTests: XCTestCase {
                 @ModelSettingID("c8HeNprhppcfYwyTs7K7Di")
                 public let isEnabled: Bool
 
+                // No ModelSettingID => should be ignored by macro
+                public var ignored: Int
+
                 public static let id: UUIDBase58 = "5x9F8TcKRSosJzw9Ue9Rux"
             
                 public static let __name: String = "TestSettings"
 
-                public static let __modelSettingProperties: OrderedDictionary<UUIDBase58, ModelSettingProperty<TestSettings>> = [
+                public static let __modelSettingProperties: ModelSettingPropertiesMap<TestSettings> = [
                     "c8HeNprhppcfYwyTs7K7Di" : .init(
                         id: "c8HeNprhppcfYwyTs7K7Di",
                         name: "isEnabled",

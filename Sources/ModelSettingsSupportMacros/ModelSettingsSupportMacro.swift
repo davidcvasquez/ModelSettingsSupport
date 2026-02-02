@@ -85,7 +85,7 @@ public struct ModelSettingPropertiesMacro: MemberMacro {
 
         let source =
         """
-        public static let __modelSettingProperties: OrderedDictionary<UUIDBase58, ModelSettingProperty<\(typeName)>> = [
+        public static let __modelSettingProperties: ModelSettingPropertiesMap<\(typeName)> = [
         \(itemsSource.isEmpty ? "" : "    ")\(itemsSource.replacingOccurrences(of: "\n", with: "\n    "))
         ]
         """
@@ -223,12 +223,7 @@ private func collectModelSettingProperties(
 
         // IMPORTANT: only include properties that have @ModelSettingID("...")
         guard let (idExprText, idKey, idAttrSyntax) = modelSettingID(from: varDecl, in: context) else {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(structDecl),
-                    message: SimpleNoteMessage(message: "modelSettingID failed.")
-                )
-            )
+            // No diagnostic - it's fine to skip properties that are not participating.
             continue
         }
 

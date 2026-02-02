@@ -24,8 +24,7 @@ public protocol StaticIdentifiable<ID> {
 public protocol ModelSettingPropertiesContainer<ModelSettingPropertiesType>: StaticIdentifiable {
     associatedtype ModelSettingPropertiesType
     static var __name: String { get }
-    static var __modelSettingProperties: OrderedDictionary<
-        UUIDBase58, ModelSettingProperty<ModelSettingPropertiesType>> { get }
+    static var __modelSettingProperties: ModelSettingPropertiesMap<ModelSettingPropertiesType> { get }
 }
 
 @attached(member, names: named(id), named(__name), named(__modelSettingProperties))
@@ -65,6 +64,9 @@ public struct ModelSettingProperty<ModelSettingPropertiesType> {
         self.mapEntry = mapEntry
     }
 }
+
+public typealias ModelSettingPropertiesMap<ModelSettingPropertiesType> =
+    OrderedDictionary<UUIDBase58, ModelSettingProperty<ModelSettingPropertiesType>>
 
 public enum PropertyValueSource: String { case stored, computed }
 public enum PropertyAccessKind: String { case readOnly, readWrite }

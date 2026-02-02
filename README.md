@@ -59,7 +59,7 @@ public protocol StaticIdentifiable<ID> {
 
 public protocol ModelSettingPropertiesContainer: StaticIdentifiable {
     static var __name: String { get }
-    static var __modelSettingProperties: OrderedDictionary<UUIDBase58, ModelSettingProperty<TestSettings>> { get }
+    static var __modelSettingProperties: ModelSettingPropertiesMap<TestSettings> { get }
 }
 
 public struct ModelSettingProperty {
@@ -86,6 +86,9 @@ public struct ModelSettingProperty {
         self.mapEntry = mapEntry
     }
 }
+
+public typealias ModelSettingPropertiesMap<ModelSettingPropertiesType> =
+    OrderedDictionary<UUIDBase58, ModelSettingProperty<ModelSettingPropertiesType>>
 
 public enum PropertyValueSource: String {
     case stored
