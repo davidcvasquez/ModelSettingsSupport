@@ -22,6 +22,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.3.0"),
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "510.0.2"),
         .package(url: "https://github.com/davidcvasquez/CompactUUID.git", from: "1.1.1"),
+        .package(url: "https://github.com/davidcvasquez/NDGeometry", from: "1.3.1"),
         // DocC plugin (supports `generate-documentation`)
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.0")
     ],
@@ -35,7 +36,8 @@ let package = Package(
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
-                .product(name: "CompactUUID", package: "CompactUUID")
+                .product(name: "CompactUUID", package: "CompactUUID"),
+                .product(name: "NDGeometry", package: "NDGeometry")
             ]
         ),
 
@@ -44,6 +46,7 @@ let package = Package(
                 dependencies: [
                     .product(name: "Collections", package: "swift-collections"),
                     .product(name: "CompactUUID", package: "CompactUUID"),
+                    .product(name: "NDGeometry", package: "NDGeometry"),
                     "ModelSettingsSupportMacros"
                 ]),
 
@@ -52,6 +55,7 @@ let package = Package(
                           dependencies: [
                             .product(name: "Collections", package: "swift-collections"),
                             .product(name: "CompactUUID", package: "CompactUUID"),
+                            .product(name: "NDGeometry", package: "NDGeometry"),
                             "ModelSettingsSupport"
                           ]),
 
@@ -61,6 +65,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "CompactUUID", package: "CompactUUID"),
+                .product(name: "NDGeometry", package: "NDGeometry"),
                 "ModelSettingsSupportMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ]
